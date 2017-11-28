@@ -25,6 +25,10 @@ type alias Model =
     ( UserInput, ConvertedOutput )
 
 
+conversionRate =
+    1.2
+
+
 model : Model
 model =
     ( "", "" )
@@ -42,7 +46,7 @@ update : Msg -> Model -> Model
 update (UpdateUserInput newInput) ( _, output ) =
     case String.toFloat newInput of
         Ok parsedNumber ->
-            ( newInput, toString (parsedNumber * 1.2) )
+            ( newInput, toString (parsedNumber * conversionRate) )
 
         Err e ->
             ( newInput, e )
