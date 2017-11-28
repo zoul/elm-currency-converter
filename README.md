@@ -1,3 +1,5 @@
+A set of simple Elm examples to explain the Elm architecture.
+
 | Example | Description | Live Link |
 |---|---|---|
 | [Trivial.elm](Trivial.elm) | Barebones example | <https://ellie-app.com/5T76QP7Nqa1/5>
