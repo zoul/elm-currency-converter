@@ -33,6 +33,14 @@ type alias Rates =
     Dict String Float
 
 
+sourceCurrency =
+    "EUR"
+
+
+targetCurrency =
+    "USD"
+
+
 type Model
     = LoadingRates
     | Error String
@@ -41,19 +49,21 @@ type Model
 
 init : ( Model, Cmd Msg )
 init =
-    let
-        ratesURL =
-            "http://api.fixer.io/latest?base=EUR"
-
-        initialRequest =
-            Http.send ReceiveRates (Http.get ratesURL decodeRates)
-    in
-        ( LoadingRates, initialRequest )
+    ( LoadingRates, getRates )
 
 
 decodeRates : Decode.Decoder (Dict String Float)
 decodeRates =
     Decode.at [ "rates" ] (Decode.dict Decode.float)
+
+
+getRates : Cmd Msg
+getRates =
+    let
+        ratesURL =
+            "http://api.fixer.io/latest?base=" ++ sourceCurrency
+    in
+        Http.send ReceiveRates (Http.get ratesURL decodeRates)
 
 
 convertRate : Rates -> Float -> String -> Maybe Float
@@ -81,7 +91,7 @@ update msg model =
         ( ReceiveRates rates, LoadingRates ) ->
             case rates of
                 Ok rates ->
-                    ( Loaded rates "" "", Cmd.none )
+                    update (UpdateUserInput "1") (Loaded rates "" "")
 
                 Err e ->
                     ( Error (toString e), Cmd.none )
@@ -89,7 +99,7 @@ update msg model =
         ( UpdateUserInput newInput, Loaded rates input output ) ->
             case (String.toFloat newInput) of
                 Ok value ->
-                    case (convertRate rates value "USD") of
+                    case (convertRate rates value targetCurrency) of
                         Just output ->
                             ( Loaded rates newInput (toString output), Cmd.none )
 
@@ -119,8 +129,8 @@ view model =
         Loaded rates userInput convertedOutput ->
             div []
                 [ input [ onInput UpdateUserInput, value userInput ] []
-                , text " EUR"
+                , text sourceCurrency
                 , br [] []
                 , input [ disabled True, value convertedOutput ] []
-                , text " USD"
+                , text targetCurrency
                 ]
