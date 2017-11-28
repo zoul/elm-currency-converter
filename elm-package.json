@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Trivial currency conversion apps showcasing the Elm architecture",
-    "repository": "https://github.com/zoul/elm-currency-converter",
+    "repository": "https://github.com/zoul/elm-currency-converter.git",
     "license": "MIT",
     "source-directories": [
         "."
